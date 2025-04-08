@@ -1,11 +1,10 @@
 <template>
   <div class="login-container">
-
-    <AlertDanger :message="errorMessage"/>
-    <AlertSuccess :message="successMessage"/>
-
     <div class="content-center">
       <div class="login-form-wrapper">
+        <AlertDanger :message="errorMessage"/>
+        <AlertSuccess :message="successMessage"/>
+
         <div class="inner-title-wrapper">
           <h2 class="inner-title">Sign In</h2>
         </div>
@@ -107,7 +106,6 @@ export default {
 </script>
 
 <style scoped>
-
 .login-container {
   position: relative;
   width: 100%;
@@ -116,6 +114,7 @@ export default {
   background: linear-gradient(to bottom, #0f517c, #001c3c);
   display: flex;
   flex-direction: column;
+  justify-content: center; /* Keskel paigutamine */
   align-items: center;
 }
 
@@ -138,7 +137,6 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 4rem;
   width: 100%;
 }
 
@@ -150,7 +148,6 @@ export default {
   border-radius: 10px;
   box-shadow: 0 0 30px rgba(207, 196, 171, 0.3);
   border: 1px solid rgba(207, 196, 171, 0.8);
-  position: relative;
 }
 
 .input-group {

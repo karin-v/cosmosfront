@@ -1,5 +1,5 @@
 <template>
-  <div class="register-container">
+  <div class="login-container">
     <div class="content-center">
       <div class="login-form-wrapper">
 
@@ -119,13 +119,7 @@ export default {
 </script>
 
 <style scoped>
-
-.login-btn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.register-container {
+.login-container {
   position: relative;
   width: 100%;
   height: 100vh;
@@ -133,28 +127,8 @@ export default {
   background: linear-gradient(to bottom, #0f517c, #001c3c);
   display: flex;
   flex-direction: column;
-  transform: translateZ(0);
-  -webkit-backface-visibility: hidden;
-}
-
-.content-center {
-  position: relative;
-  width: 100%;
-}
-
-.login-form-wrapper {
-  width: 90%;
-  max-width: 400px;
-  padding: 2rem;
-  background-color: rgba(207, 196, 171, 0.7);
-  border-radius: 10px;
-  box-shadow: 0 0 30px rgba(207, 196, 171, 0.3);
-  border: 1px solid rgba(207, 196, 171, 0.8);
-  position: fixed;
-  top: 215px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
+  justify-content: center; /* Keskel paigutamine */
+  align-items: center;
 }
 
 .inner-title-wrapper {
@@ -170,6 +144,23 @@ export default {
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5), 0 0 15px #00e5ff, 0 0 25px #00e5ff;
   font-family: 'Arial', sans-serif;
   font-size: 1.5rem;
+}
+
+.content-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.login-form-wrapper {
+  width: 90%;
+  max-width: 400px;
+  padding: 2rem;
+  background-color: rgba(207, 196, 171, 0.7);
+  border-radius: 10px;
+  box-shadow: 0 0 30px rgba(207, 196, 171, 0.3);
+  border: 1px solid rgba(207, 196, 171, 0.8);
 }
 
 .input-group {
@@ -202,10 +193,6 @@ export default {
   box-shadow: 0 0 0 2px rgba(0, 229, 255, 0.3);
 }
 
-.form-input::placeholder {
-  color: rgba(0, 28, 60, 0.4);
-}
-
 .login-btn {
   width: 100%;
   background-color: #00e5ff;
@@ -218,7 +205,6 @@ export default {
   border-radius: 6px;
   padding: 0.4rem 1rem;
   box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
-  text-align: center;
   cursor: pointer;
   margin-bottom: 1rem;
 }
@@ -268,17 +254,5 @@ export default {
 .divider {
   color: #cfc4ab;
   opacity: 0.8;
-}
-
-@media (max-width: 768px) {
-  .login-form-wrapper {
-    width: 95%;
-    padding: 1.5rem;
-  }
-
-  .inner-title {
-    font-size: 1.3rem;
-    letter-spacing: 0.3rem;
-  }
 }
 </style>
