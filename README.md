@@ -42,11 +42,10 @@
 - **Sorting:** Routes can be sorted by price, distance, or travel time (ascending or descending)
 - **User Registration:** Possibility to register an account that is saved to the database
 - **Login View:** User interface has a login form (authentication not implemented)
-
+- **Price List Validity:** Backend checks pricelists validity
+- **Reservation Submission:** Users can make reservations, which are validated before saving to the database
+  
 ## Functionality Under Development
 
 - Actual login authentication
-- Booking functionality
-- Price list validity check
-- Booking management
-See [Configuration Reference](https://cli.vuejs.org/config/).
+- Booking functionality in frontend
