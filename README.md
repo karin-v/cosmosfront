@@ -37,15 +37,15 @@
 
 ## Existing Functionality
 
-- **Planet Selection:** Users can select origin and destination planets
-- **Route Filtering:** Displays routes between selected planets
-- **Sorting:** Routes can be sorted by price, distance, or travel time (ascending or descending)
-- **User Registration:** Possibility to register an account that is saved to the database
-- **Login View:** User interface has a login form (authentication not implemented)
-- **Price List Validity:** Backend checks pricelists validity
-- **Reservation Submission:** Users can make reservations, which are validated before saving to the database
+- **Planet Selection:** Allows selection of origin and destination planets.
+- **Route Filtering:** Shows available travel routes based on selected planets.
+- **Sorting:** Routes can be sorted by price, distance, or travel time.
+- **User Registration:** Enables user registration and stores data in the database.
+- **Login View:** Frontend login form with backend login handling.
+- **Price List Validity:** Pricelist validity is verified on the backend.
+- **Reservation Submission:** Users can submit reservations, which are validated and saved (backend)
   
 ## Functionality Under Development
 
-- Actual login authentication
-- Booking functionality in frontend
+- Frontend login handling
+- Frontend booking functionality
