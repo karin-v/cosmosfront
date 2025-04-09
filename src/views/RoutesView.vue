@@ -80,15 +80,13 @@
     <div class="bottom-nav">
       <router-link to="/" class="bottom-nav-link">Home</router-link>
       <span class="divider">|</span>
-      <router-link to="/routes" class="bottom-nav-link">Routes</router-link>
+      <router-link to="/planets" class="bottom-nav-link">Routes</router-link>
 
       <template v-if="isLoggedIn">
         <span class="divider">|</span>
-        <router-link to="/book-flight" class="bottom-nav-link">Book Flight</router-link>
-        <span class="divider">|</span>
         <router-link to="/my-bookings" class="bottom-nav-link">My Bookings</router-link>
         <span class="divider">|</span>
-        <button @click="handleLogout" class="bottom-nav-link logout-btn">Log out</button>
+        <button @click="handleLogout" class="bottom-nav-link logout-btn">Logout</button>
       </template>
 
       <template v-else>
@@ -305,9 +303,9 @@ export default {
 
 .routes-table-container {
   width: 100%;
-  height: 440px; /* Reduced by an additional row */
-  overflow-y: auto; /* Vertical scrolling */
-  overflow-x: auto; /* Horizontal scrolling if needed */
+  height: 440px;
+  overflow-y: auto;
+  overflow-x: auto;
   background-color: rgba(0, 28, 60, 0.5);
   border-radius: 10px;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
@@ -352,12 +350,12 @@ export default {
 }
 
 .routes-table th {
-  background-color: #001c3c; /* Solid background color */
+  background-color: #001c3c;
   color: #00e5ff;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Add shadow for visual separation */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .routes-table tr:hover {
@@ -469,7 +467,7 @@ export default {
   }
 
   .routes-table-container {
-    height: 390px; /* Reduced by an additional row on mobile */
+    height: 390px;
   }
 }
 </style>
