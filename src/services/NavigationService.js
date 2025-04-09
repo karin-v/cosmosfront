@@ -22,7 +22,7 @@ export default {
         router.push({name: 'routesRoute', query: params})
     },
 
-    navigateToBookingView(params = {}) {
+    navigateToBookingsView(params = {}) {
         router.push({name: 'bookingRoute', query: params})
     }
 }
