@@ -1,9 +1,18 @@
 <template>
   <div class="route-info-container">
+
     <LoginRequiredModal
         :modalIsOpen="showLoginModal"
         @login="navigateToLogin"
         @close="closeModal"
+    />
+
+    <BookingDetailsModal
+        :modalIsOpen="showBookingModal"
+        :route="selectedRoute"
+        :provider="selectedProvider"
+        @close="closeBookingModal"
+        @confirm="confirmBooking"
     />
 
     <div class="title-wrapper">
@@ -60,7 +69,10 @@
               <td>{{ routeProvider.route.distance }} AU</td>
               <td>{{ routeProvider.provider.price }} CC</td>
               <td>
-                <button @click="bookRoute(routeProvider.route, routeProvider.provider)" class="book-button">
+                <button
+                    @click="bookRoute(routeProvider.route, routeProvider.provider)"
+                    class="book-button"
+                >
                   Book Flight
                 </button>
               </td>
@@ -100,6 +112,7 @@
 <script>
 import NavigationService from "@/services/NavigationService";
 import LoginRequiredModal from "@/components/LoginRequiredModal.vue";
+import BookingDetailsModal from "@/components/BookingDetailsModal.vue";
 import RouteService from "@/services/RouteService";
 import AlertDanger from "@/components/alerts/AlertDanger.vue";
 
@@ -107,11 +120,15 @@ export default {
   name: "RoutesView",
   components: {
     LoginRequiredModal,
+    BookingDetailsModal,
     AlertDanger
   },
   data() {
     return {
       showLoginModal: false,
+      showBookingModal: false,
+      selectedRoute: null,
+      selectedProvider: null,
       modalTimeout: null,
       sortBy: "price",
       sortOrder: "asc",
@@ -123,50 +140,39 @@ export default {
     };
   },
   computed: {
+    isLoggedIn() {
+      return sessionStorage.getItem("firstName") !== null &&
+          sessionStorage.getItem("lastName") !== null;
+    },
+
     filteredRoutes() {
       return this.routes.filter(route => {
-        const matchesFrom =
-            !this.selectedFromPlanet || route.fromPlanetName === this.selectedFromPlanet;
-        const matchesTo =
-            !this.selectedToPlanet || route.toPlanetName === this.selectedToPlanet;
+        const matchesFrom = !this.selectedFromPlanet || route.fromPlanetName === this.selectedFromPlanet;
+        const matchesTo = !this.selectedToPlanet || route.toPlanetName === this.selectedToPlanet;
         return matchesFrom && matchesTo;
       });
     },
 
     flatSortedRoutes() {
       const flatList = [];
-
       this.filteredRoutes.forEach(route => {
         if (route.providers && route.providers.length > 0) {
           route.providers.forEach(provider => {
-            flatList.push({
-              route: route,
-              provider: provider
-            });
+            flatList.push({route, provider});
           });
         }
       });
-
       return flatList.sort((a, b) => {
         let comparison = 0;
-
         if (this.sortBy === "price") {
-          const priceA = Number(a.provider.price);
-          const priceB = Number(b.provider.price);
-          comparison = priceA - priceB;
+          comparison = a.provider.price - b.provider.price;
         } else if (this.sortBy === "distance") {
           comparison = a.route.distance - b.route.distance;
         } else if (this.sortBy === "travelTime") {
           comparison = a.provider.travelTimeMinutes - b.provider.travelTimeMinutes;
         }
-
         return this.sortOrder === "asc" ? comparison : -comparison;
       });
-    },
-
-    isLoggedIn() {
-      return sessionStorage.getItem('firstName') !== null &&
-          sessionStorage.getItem('lastName') !== null;
     }
   },
   mounted() {
@@ -183,7 +189,6 @@ export default {
 
     handleGetRoutesResponse(response) {
       this.routes = response.data;
-
       if (this.filteredRoutes.length === 0) {
         this.errorMessage = "No available routes found for the selected planets";
         this.startAlertTimer();
@@ -192,7 +197,9 @@ export default {
 
     bookRoute(route, provider) {
       if (this.isLoggedIn) {
-        alert(`Booking flight from ${route.fromPlanetName} to ${route.toPlanetName} with ${provider.companyName}`);
+        this.selectedRoute = route;
+        this.selectedProvider = provider;
+        this.showBookingModal = true;
       } else {
         this.showLoginModal = true;
         this.modalTimeout = setTimeout(() => {
@@ -201,34 +208,41 @@ export default {
       }
     },
 
+    closeBookingModal() {
+      this.showBookingModal = false;
+    },
+
+    confirmBooking() {
+      this.showBookingModal = false;
+      alert(
+          `✅ Booking confirmed!\nFrom: ${this.selectedRoute.fromPlanetName} → ${this.selectedRoute.toPlanetName}`
+      );
+    },
     startAlertTimer() {
       if (this.alertTimeout) clearTimeout(this.alertTimeout);
       this.alertTimeout = setTimeout(() => {
-        this.errorMessage = '';
+        this.errorMessage = "";
       }, 7000);
     },
-
     closeModal() {
       this.showLoginModal = false;
       if (this.modalTimeout) clearTimeout(this.modalTimeout);
     },
-
     handleLogout() {
       sessionStorage.clear();
       NavigationService.navigateToHomeView();
     },
-
     navigateToLogin() {
       this.closeModal();
       NavigationService.navigateToLoginView();
     },
-
     navigateToPlanetsView() {
       NavigationService.navigateToPlanetsView();
     }
   }
 };
 </script>
+
 
 <style scoped>
 .route-info-container {
