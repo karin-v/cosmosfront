@@ -41,11 +41,11 @@
 - **Route Filtering:** Shows available travel routes based on selected planets.
 - **Sorting:** Routes can be sorted by price, distance, or travel time.
 - **User Registration:** Enables user registration and stores data in the database.
-- **Login View:** Frontend login form with backend login handling.
+- **Login View:** Login and logout handled
 - **Price List Validity:** Pricelist validity is verified on the backend.
 - **Reservation Submission:** Users can submit reservations, which are validated and saved (backend)
   
 ## Functionality Under Development
 
-- Frontend login handling
 - Frontend booking functionality
+
