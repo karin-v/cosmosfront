@@ -15,6 +15,8 @@
         @confirm="confirmBooking"
     />
 
+    <AlertSuccess v-if="successMessage" :message="successMessage"/>
+
     <div class="title-wrapper">
       <div class="main-title">
         <h5>Available Routes</h5>
@@ -30,6 +32,7 @@
           <option value="travelTime">Travel Time</option>
         </select>
       </div>
+
       <div class="filter-item">
         <label>Order:</label>
         <select v-model="sortOrder" class="filter-select">
@@ -115,13 +118,15 @@ import LoginRequiredModal from "@/components/LoginRequiredModal.vue";
 import BookingDetailsModal from "@/components/BookingDetailsModal.vue";
 import RouteService from "@/services/RouteService";
 import AlertDanger from "@/components/alerts/AlertDanger.vue";
+import AlertSuccess from "@/components/alerts/AlertSuccess.vue";
 
 export default {
   name: "RoutesView",
   components: {
     LoginRequiredModal,
     BookingDetailsModal,
-    AlertDanger
+    AlertDanger,
+    AlertSuccess
   },
   data() {
     return {
@@ -136,6 +141,7 @@ export default {
       selectedToPlanet: "",
       routes: [],
       errorMessage: "",
+      successMessage: "",
       alertTimeout: null
     };
   },
@@ -214,35 +220,40 @@ export default {
 
     confirmBooking() {
       this.showBookingModal = false;
-      alert(
-          `✅ Booking confirmed!\nFrom: ${this.selectedRoute.fromPlanetName} → ${this.selectedRoute.toPlanetName}`
-      );
+      this.successMessage = `Booking confirmed! From: ${this.selectedRoute.fromPlanetName} → ${this.selectedRoute.toPlanetName}`;
+      setTimeout(() => {
+        NavigationService.navigateToBookingsView();
+      }, 3000);
     },
+
     startAlertTimer() {
       if (this.alertTimeout) clearTimeout(this.alertTimeout);
       this.alertTimeout = setTimeout(() => {
         this.errorMessage = "";
-      }, 7000);
+      }, 3000);
     },
+
     closeModal() {
       this.showLoginModal = false;
       if (this.modalTimeout) clearTimeout(this.modalTimeout);
     },
+
     handleLogout() {
       sessionStorage.clear();
       NavigationService.navigateToHomeView();
     },
+
     navigateToLogin() {
       this.closeModal();
       NavigationService.navigateToLoginView();
     },
+
     navigateToPlanetsView() {
       NavigationService.navigateToPlanetsView();
     }
   }
 };
 </script>
-
 
 <style scoped>
 .route-info-container {

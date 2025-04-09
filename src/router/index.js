@@ -6,7 +6,7 @@ import PlanetsView from "@/views/PlanetsView.vue"
 import RoutesView from "@/views/RoutesView.vue";
 import ErrorView from "@/views/ErrorView.vue";
 import RegisterView from "@/views/RegisterView.vue";
-import BookingView from "@/views/BookingView.vue";
+import BookingsView from "@/views/BookingsView.vue";
 
 const routes = [
     {
@@ -45,9 +45,9 @@ const routes = [
         component: ErrorView
     },
     {
-        path: '/book-flight',
+        path: '/my-bookings',
         name: 'bookingRoute',
-        component: BookingView
+        component: BookingsView
     },
 ]
 

@@ -28,23 +28,33 @@
 </template>
 
 <script>
-import NavigationService from "@/services/NavigationService";
 
 export default {
   name: 'HomeView',
-  computed: {
-    isLoggedIn() {
-      return sessionStorage.getItem('firstName') !== null &&
-          sessionStorage.getItem('lastName') !== null;
-    }
+  data() {
+    return {
+      isLoggedIn: false
+    };
   },
+
+  created() {
+    this.checkLoginStatus();
+  },
+
   methods: {
+    checkLoginStatus() {
+      this.isLoggedIn =
+          sessionStorage.getItem('firstName') !== null &&
+          sessionStorage.getItem('lastName') !== null;
+    },
+
     handleLogout() {
       sessionStorage.clear();
-      NavigationService.navigateToHomeView()
+      this.isLoggedIn = false;
+      this.$forceUpdate(); // force component re-render
     }
   },
-}
+};
 </script>
 
 <style scoped>

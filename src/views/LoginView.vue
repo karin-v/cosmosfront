@@ -57,7 +57,6 @@
   </div>
 </template>
 
-
 <script>
 import NavigationService from "@/services/NavigationService";
 import AlertSuccess from "@/components/alerts/AlertSuccess.vue";
@@ -105,7 +104,7 @@ export default {
             setTimeout(() => {
               this.clearAlerts();
               NavigationService.navigateToPlanetsView();
-            }, 2000);
+            }, 1500);
           })
           .catch(() => {
             this.errorMessage = "Login failed. Please check your credentials";
@@ -125,7 +124,7 @@ export default {
     startAlertTimer() {
       this.alertTimeout = setTimeout(() => {
         this.clearAlerts();
-      }, 2000);
+      }, 1500);
     },
 
     clearAlerts() {
@@ -141,6 +140,7 @@ export default {
     }
   }
 };
+
 </script>
 
 <style scoped>
