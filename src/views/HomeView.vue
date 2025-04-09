@@ -10,16 +10,40 @@
 
       <div class="bottom-links">
         <router-link to="/planets" class="nav-link-custom">Routes</router-link>
-        <span class="divider">|</span>
-        <router-link to="/login" class="nav-link-custom">Login</router-link>
+
+        <template v-if="isLoggedIn">
+          <span class="divider">|</span>
+          <router-link to="/my-bookings" class="nav-link-custom">My Bookings</router-link>
+          <span class="divider">|</span>
+          <button @click="handleLogout" class="nav-link-custom logout-btn">Logout</button>
+        </template>
+
+        <template v-else>
+          <span class="divider">|</span>
+          <router-link to="/login" class="nav-link-custom">Login</router-link>
+        </template>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import NavigationService from "@/services/NavigationService";
+
 export default {
-  name: 'HomeView'
+  name: 'HomeView',
+  computed: {
+    isLoggedIn() {
+      return sessionStorage.getItem('firstName') !== null &&
+          sessionStorage.getItem('lastName') !== null;
+    }
+  },
+  methods: {
+    handleLogout() {
+      sessionStorage.clear();
+      NavigationService.navigateToHomeView()
+    }
+  },
 }
 </script>
 
@@ -60,10 +84,9 @@ export default {
   font-size: 2.8rem;
   text-transform: uppercase;
   letter-spacing: 0.4rem;
-  text-shadow:
-      2px 2px 4px #000000cc,
-      0 0 15px #cfc4ab,
-      0 0 25px #cfc4ab;
+  text-shadow: 2px 2px 4px #000000cc,
+  0 0 15px #cfc4ab,
+  0 0 25px #cfc4ab;
   font-family: 'Arial', sans-serif;
 }
 
@@ -73,10 +96,9 @@ export default {
   text-transform: uppercase;
   letter-spacing: 0.9rem;
   margin-top: 0.5rem;
-  text-shadow:
-      2px 2px 4px #000000cc,
-      0 0 15px #cfc4ab,
-      0 0 25px #cfc4ab;
+  text-shadow: 2px 2px 4px #000000cc,
+  0 0 15px #cfc4ab,
+  0 0 25px #cfc4ab;
   font-family: 'Arial', sans-serif;
 }
 
@@ -97,9 +119,20 @@ export default {
   text-transform: uppercase;
   letter-spacing: 0.2rem;
   font-weight: 600;
-  text-shadow:
-      1px 1px 3px #000000e6,
-      0 0 10px #cfc4ab80;
+  text-shadow: 1px 1px 3px #000000e6,
+  0 0 10px #cfc4ab80;
+}
+
+.logout-btn {
+  background: none;
+  border: none;
+  font: inherit;
+  color: #cfc4ab;
+  cursor: pointer;
+  text-transform: uppercase;
+  text-decoration: underline;
+  padding: 0;
+  margin: 0 15px;
 }
 
 .divider {

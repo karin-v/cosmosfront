@@ -46,7 +46,7 @@
     <div class="bottom-nav">
       <router-link to="/" class="bottom-nav-link">Home</router-link>
       <span class="divider">|</span>
-      <router-link to="/routes" class="bottom-nav-link">Routes</router-link>
+      <router-link to="/planets" class="bottom-nav-link">Routes</router-link>
     </div>
   </div>
 </template>
@@ -84,7 +84,7 @@ export default {
         return;
       }
 
-      CustomerService.sendPostCustomerRequest(this.customerDto)
+      CustomerService.sendRegisterCustomerRequest(this.customerDto)
           .then(() => {
             this.successMessage = "Registration successful!";
             this.customerDto.firstName = '';

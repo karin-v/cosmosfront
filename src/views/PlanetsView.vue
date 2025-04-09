@@ -45,9 +45,19 @@
     </div>
 
     <div class="bottom-nav">
-      <router-link to="/login" class="bottom-nav-link">Login</router-link>
-      <span class="divider">|</span>
       <router-link to="/" class="bottom-nav-link">Home</router-link>
+
+      <template v-if="isLoggedIn">
+        <span class="divider">|</span>
+        <router-link to="/my-bookings" class="bottom-nav-link">My Bookings</router-link>
+        <span class="divider">|</span>
+        <button @click="handleLogout" class="bottom-nav-link logout-btn">Logout</button>
+      </template>
+
+      <template v-else>
+        <span class="divider">|</span>
+        <router-link to="/login" class="bottom-nav-link">Login</router-link>
+      </template>
     </div>
   </div>
 </template>
@@ -72,6 +82,12 @@ export default {
       errorMessage: "",
       alertTimeout: null
     };
+  },
+  computed: {
+    isLoggedIn() {
+      return sessionStorage.getItem('firstName') !== null &&
+          sessionStorage.getItem('lastName') !== null;
+    }
   },
   mounted() {
     this.getAllPlanets();
@@ -104,6 +120,11 @@ export default {
     resetPlanetSelections() {
       this.selectedFromPlanet = "";
       this.selectedToPlanet = "";
+    },
+
+    handleLogout() {
+      sessionStorage.clear();
+      NavigationService.navigateToHomeView()
     },
 
     startAlertTimer() {
@@ -261,6 +282,18 @@ export default {
   text-transform: uppercase;
   letter-spacing: 0.2rem;
   font-weight: 600;
+}
+
+.logout-btn {
+  background: none;
+  border: none;
+  color: #cfc4ab;
+  font: inherit;
+  cursor: pointer;
+  text-transform: uppercase;
+  text-decoration: underline;
+  padding: 0;
+  margin: 0 15px;
 }
 
 .divider {

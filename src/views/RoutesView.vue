@@ -78,11 +78,23 @@
     </div>
 
     <div class="bottom-nav">
-      <router-link to="/login" class="bottom-nav-link">Login</router-link>
-      <span class="divider">|</span>
       <router-link to="/" class="bottom-nav-link">Home</router-link>
       <span class="divider">|</span>
       <router-link to="/routes" class="bottom-nav-link">Routes</router-link>
+
+      <template v-if="isLoggedIn">
+        <span class="divider">|</span>
+        <router-link to="/book-flight" class="bottom-nav-link">Book Flight</router-link>
+        <span class="divider">|</span>
+        <router-link to="/my-bookings" class="bottom-nav-link">My Bookings</router-link>
+        <span class="divider">|</span>
+        <button @click="handleLogout" class="bottom-nav-link logout-btn">Log out</button>
+      </template>
+
+      <template v-else>
+        <span class="divider">|</span>
+        <router-link to="/login" class="bottom-nav-link">Login</router-link>
+      </template>
     </div>
   </div>
 </template>
@@ -102,7 +114,6 @@ export default {
   data() {
     return {
       showLoginModal: false,
-      isLoggedIn: false,
       modalTimeout: null,
       sortBy: "price",
       sortOrder: "asc",
@@ -153,6 +164,11 @@ export default {
 
         return this.sortOrder === "asc" ? comparison : -comparison;
       });
+    },
+
+    isLoggedIn() {
+      return sessionStorage.getItem('firstName') !== null &&
+          sessionStorage.getItem('lastName') !== null;
     }
   },
   mounted() {
@@ -197,6 +213,11 @@ export default {
     closeModal() {
       this.showLoginModal = false;
       if (this.modalTimeout) clearTimeout(this.modalTimeout);
+    },
+
+    handleLogout() {
+      sessionStorage.clear();
+      NavigationService.navigateToHomeView();
     },
 
     navigateToLogin() {
@@ -409,6 +430,18 @@ export default {
 .divider {
   color: #cfc4ab;
   opacity: 0.8;
+}
+
+.logout-btn {
+  background: none;
+  border: none;
+  color: #cfc4ab;
+  font: inherit;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  margin: 0 15px;
 }
 
 .modal-content h4 {

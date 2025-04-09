@@ -1,10 +1,13 @@
 <template>
   <div class="login-container">
     <div class="content-center">
-      <div class="login-form-wrapper">
-        <AlertDanger :message="errorMessage"/>
-        <AlertSuccess :message="successMessage"/>
 
+      <div class="alert-wrapper">
+        <AlertDanger v-if="errorMessage" :message="errorMessage"/>
+        <AlertSuccess v-if="successMessage" :message="successMessage"/>
+      </div>
+
+      <div class="login-form-wrapper">
         <div class="inner-title-wrapper">
           <h2 class="inner-title">Sign In</h2>
         </div>
@@ -14,7 +17,7 @@
           <input
               id="firstName"
               type="text"
-              v-model="loginForm.firstName"
+              v-model="firstName"
               placeholder="First name"
               class="form-input"
           />
@@ -25,15 +28,13 @@
           <input
               id="lastName"
               type="text"
-              v-model="loginForm.lastName"
+              v-model="lastName"
               placeholder="Last name"
               class="form-input"
           />
         </div>
 
-        <button @click="handleLogin" class="login-btn">
-          Log in
-        </button>
+        <button @click="handleLogin" class="login-btn">Log in</button>
 
         <p class="register-prompt">
           Don't have an account?
@@ -45,15 +46,23 @@
     <div class="bottom-nav">
       <router-link to="/" class="bottom-nav-link">Home</router-link>
       <span class="divider">|</span>
-      <router-link to="/routes" class="bottom-nav-link">Routes</router-link>
+      <router-link to="/planets" class="bottom-nav-link">Routes</router-link>
+
+      <template v-if="isLoggedIn()">
+        <span class="divider">|</span>
+        <button @click="handleLogout" class="bottom-nav-link logout-btn">Logout</button>
+      </template>
+
     </div>
   </div>
 </template>
+
 
 <script>
 import NavigationService from "@/services/NavigationService";
 import AlertSuccess from "@/components/alerts/AlertSuccess.vue";
 import AlertDanger from "@/components/alerts/AlertDanger.vue";
+import CustomerService from "@/services/CustomerService";
 
 export default {
   name: "LoginView",
@@ -63,43 +72,72 @@ export default {
   },
   data() {
     return {
-      loginForm: {
-        firstName: '',
-        lastName: ''
-      },
+      firstName: '',
+      lastName: '',
       errorMessage: '',
       successMessage: '',
       alertTimeout: null
     };
   },
   methods: {
+    isLoggedIn() {
+      return sessionStorage.getItem('firstName') !== null &&
+          sessionStorage.getItem('lastName') !== null;
+    },
+
     handleLogin() {
       this.clearAlerts();
 
-      if (!this.loginForm.firstName || !this.loginForm.lastName) {
-        this.errorMessage = "Please fill in all fields";
+      if (!this.firstName || !this.lastName) {
+        this.errorMessage = "Please fill in all the fields";
         this.startAlertTimer();
         return;
       }
 
-      this.successMessage = "Login successful!";
-      this.startAlertTimer();
+      CustomerService.sendLoginRequest(this.firstName, this.lastName)
+          .then(() => {
+            sessionStorage.setItem('firstName', this.firstName);
+            sessionStorage.setItem('lastName', this.lastName);
 
-      setTimeout(() => {
-        NavigationService.navigateToPlanetsView();
-      }, 1500);
+            this.successMessage = "Login successful!";
+            this.startAlertTimer();
+
+            setTimeout(() => {
+              this.clearAlerts();
+              NavigationService.navigateToPlanetsView();
+            }, 3000);
+          })
+          .catch(() => {
+            this.errorMessage = "Login failed. Please check your credentials";
+            this.startAlertTimer();
+          });
+    },
+
+    handleLogout() {
+      sessionStorage.removeItem('firstName');
+      sessionStorage.removeItem('lastName');
+      this.firstName = '';
+      this.lastName = '';
+      this.successMessage = "Logged out successfully!";
+      this.startAlertTimer();
+    },
+
+    startAlertTimer() {
+      this.alertTimeout = setTimeout(() => {
+        this.clearAlerts();
+      }, 3000);
     },
 
     clearAlerts() {
       this.errorMessage = '';
       this.successMessage = '';
       if (this.alertTimeout) clearTimeout(this.alertTimeout);
-    },
-
-    startAlertTimer() {
-      this.alertTimeout = setTimeout(() => {
-        this.clearAlerts();
-      }, 5000);
+    }
+  },
+  mounted() {
+    if (this.isLoggedIn()) {
+      this.firstName = sessionStorage.getItem('firstName');
+      this.lastName = sessionStorage.getItem('lastName');
     }
   }
 };
@@ -114,29 +152,16 @@ export default {
   background: linear-gradient(to bottom, #0f517c, #001c3c);
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Keskel paigutamine */
+  justify-content: center;
   align-items: center;
-}
-
-.inner-title-wrapper {
-  text-align: center;
-  margin-bottom: 1.5rem;
-}
-
-.inner-title {
-  color: #00e5ff;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 0.4rem;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5), 0 0 15px #00e5ff, 0 0 25px #00e5ff;
-  font-family: 'Arial', sans-serif;
-  font-size: 1.5rem;
 }
 
 .content-center {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  height: 100vh;
   width: 100%;
 }
 
@@ -178,6 +203,21 @@ export default {
   outline: none;
   border-color: #00e5ff;
   box-shadow: 0 0 0 2px rgba(0, 229, 255, 0.3);
+}
+
+.inner-title-wrapper {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.inner-title {
+  color: #00e5ff;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.4rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5), 0 0 15px #00e5ff, 0 0 25px #00e5ff;
+  font-family: 'Arial', sans-serif;
+  font-size: 1.5rem;
 }
 
 .login-btn {
@@ -241,5 +281,32 @@ export default {
 .divider {
   color: #cfc4ab;
   opacity: 0.8;
+}
+
+.logout-btn {
+  background: none;
+  border: none;
+  color: #cfc4ab;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  text-transform: uppercase;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.alert-wrapper {
+  max-width: 400px;
+  width: 90%;
+  margin-bottom: 1rem;
+}
+
+.alert-success,
+.alert-danger {
+  max-width: 400px;
+  width: 90%;
+  margin-bottom: 1rem;
+  word-break: break-word;
+  white-space: normal;
 }
 </style>
