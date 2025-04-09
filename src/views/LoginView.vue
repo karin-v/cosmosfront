@@ -105,7 +105,7 @@ export default {
             setTimeout(() => {
               this.clearAlerts();
               NavigationService.navigateToPlanetsView();
-            }, 3000);
+            }, 2000);
           })
           .catch(() => {
             this.errorMessage = "Login failed. Please check your credentials";
@@ -125,7 +125,7 @@ export default {
     startAlertTimer() {
       this.alertTimeout = setTimeout(() => {
         this.clearAlerts();
-      }, 3000);
+      }, 2000);
     },
 
     clearAlerts() {
