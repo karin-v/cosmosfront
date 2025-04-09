@@ -1,12 +1,12 @@
+<template>
+
+</template>
+
 <script>
 export default {
-name: "ProfileView"
+  name: "BookingsView"
 }
 </script>
-
-<template>
-  
-</template>
 
 <style scoped>
 

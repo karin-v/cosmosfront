@@ -1,10 +1,17 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/api/v1.0/register";
+const API_URL = "http://localhost:8080/api/v1.0";
 
 export default {
 
-    sendPostCustomerRequest(customerDto) {
-        return axios.post(API_URL, customerDto);
+    sendRegisterCustomerRequest(customerDto) {
+        return axios.post(API_URL + "/register", customerDto);
+    },
+
+    sendLoginRequest(firstName, lastName) {
+        return axios.post(API_URL + "/login", {
+            firstName: firstName,
+            lastName: lastName
+        });
     }
 }

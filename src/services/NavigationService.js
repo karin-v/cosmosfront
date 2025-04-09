@@ -14,15 +14,15 @@ export default {
         router.push({name: 'loginRoute'})
     },
 
-    navigateToRegisterView() {
-        router.push({name: 'registerRoute'})
-    },
-
     navigateToPlanetsView() {
         router.push({name: 'planetsRoute'})
     },
 
     navigateToRoutesView(params = {}) {
         router.push({name: 'routesRoute', query: params})
+    },
+
+    navigateToBookingView(params = {}) {
+        router.push({name: 'bookingRoute', query: params})
     }
 }
