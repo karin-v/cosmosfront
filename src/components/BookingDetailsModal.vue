@@ -27,7 +27,7 @@ export default {
     modalIsOpen: Boolean,
     route: Object,
     provider: Object
-  }
+  },
 };
 </script>
 

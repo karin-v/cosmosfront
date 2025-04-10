@@ -51,7 +51,7 @@ export default {
     handleLogout() {
       sessionStorage.clear();
       this.isLoggedIn = false;
-      this.$forceUpdate(); // force component re-render
+      this.$forceUpdate();
     }
   },
 };

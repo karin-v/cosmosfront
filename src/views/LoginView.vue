@@ -73,6 +73,8 @@ export default {
     return {
       firstName: '',
       lastName: '',
+      customerId: '',
+
       errorMessage: '',
       successMessage: '',
       alertTimeout: null
@@ -94,9 +96,10 @@ export default {
       }
 
       CustomerService.sendLoginRequest(this.firstName, this.lastName)
-          .then(() => {
-            sessionStorage.setItem('firstName', this.firstName);
-            sessionStorage.setItem('lastName', this.lastName);
+          .then(response => {
+            sessionStorage.setItem("firstName", response.data.firstName);
+            sessionStorage.setItem("lastName", response.data.lastName);
+            sessionStorage.setItem("customerId", response.data.id);
 
             this.successMessage = "Login successful!";
             this.startAlertTimer();
@@ -107,7 +110,7 @@ export default {
             }, 1500);
           })
           .catch(() => {
-            this.errorMessage = "Login failed. Please check your credentials";
+            this.errorMessage = "Login failed. Check your credentials";
             this.startAlertTimer();
           });
     },
@@ -299,14 +302,16 @@ export default {
   max-width: 400px;
   width: 90%;
   margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.alert-success,
-.alert-danger {
-  max-width: 400px;
-  width: 90%;
-  margin-bottom: 1rem;
-  word-break: break-word;
-  white-space: normal;
+.alert-danger,
+.alert-success {
+  width: 100%;
+  padding: 0.8rem;
+  border-radius: 6px;
+  text-align: center;
 }
 </style>

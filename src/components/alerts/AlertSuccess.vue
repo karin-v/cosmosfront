@@ -26,8 +26,11 @@ export default {
   text-align: center;
   text-transform: uppercase;
   letter-spacing: 0.04rem;
+  width: 100%;
   max-width: 360px;
   box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
+  white-space: normal;
+  word-wrap: break-word;
 }
 
 .success {
