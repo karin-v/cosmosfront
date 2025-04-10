@@ -32,21 +32,40 @@
 
 <script>
 import NavigationService from "@/services/NavigationService";
+import BookingsService from "@/services/BookingService";
 
 export default {
-  name: "MyBookingsView",
+  name: "BookingsView",
   data() {
     return {
-      bookings: []
+      bookings: [],
+      errorMessage: ""
     };
   },
   computed: {
     isLoggedIn() {
-      return sessionStorage.getItem("firstName") !== null &&
-          sessionStorage.getItem("lastName") !== null;
+      return sessionStorage.getItem("customerId") !== null;
     }
   },
+  mounted() {
+    if (!this.isLoggedIn) {
+      NavigationService.navigateToLoginView();
+      return;
+    }
+
+    this.loadBookings();
+  },
   methods: {
+    loadBookings() {
+      const customerId = sessionStorage.getItem("customerId");
+      BookingsService.getBookingsByCustomerId(customerId)
+          .then(response => {
+            this.bookings = response.data;
+          })
+          .catch(() => {
+            this.errorMessage = "Failed to load your bookings.";
+          });
+    },
     handleLogout() {
       sessionStorage.clear();
       NavigationService.navigateToHomeView();

@@ -32,9 +32,10 @@ export default {
   border: 2px solid #ff7f50;
   box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
 
-  white-space: nowrap;
-  width: fit-content;
+  white-space: normal;
+  width: 100%;
   max-width: 90%;
+  word-wrap: break-word;
 }
 
 .danger {

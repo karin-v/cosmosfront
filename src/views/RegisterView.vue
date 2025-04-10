@@ -127,7 +127,7 @@ export default {
   background: linear-gradient(to bottom, #0f517c, #001c3c);
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Keskel paigutamine */
+  justify-content: center;
   align-items: center;
 }
 

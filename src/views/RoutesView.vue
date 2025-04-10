@@ -11,8 +11,8 @@
         :modalIsOpen="showBookingModal"
         :route="selectedRoute"
         :provider="selectedProvider"
-        @close="closeBookingModal"
         @confirm="confirmBooking"
+        @close="closeBookingModal"
     />
 
     <AlertSuccess v-if="successMessage" :message="successMessage"/>
@@ -117,6 +117,7 @@ import NavigationService from "@/services/NavigationService";
 import LoginRequiredModal from "@/components/LoginRequiredModal.vue";
 import BookingDetailsModal from "@/components/BookingDetailsModal.vue";
 import RouteService from "@/services/RouteService";
+import ReservationService from "@/services/BookingService";
 import AlertDanger from "@/components/alerts/AlertDanger.vue";
 import AlertSuccess from "@/components/alerts/AlertSuccess.vue";
 
@@ -160,14 +161,21 @@ export default {
     },
 
     flatSortedRoutes() {
+      const now = new Date().toISOString();
       const flatList = [];
+
       this.filteredRoutes.forEach(route => {
-        if (route.providers && route.providers.length > 0) {
-          route.providers.forEach(provider => {
-            flatList.push({route, provider});
+        if (route.providers?.length > 0) {
+          const validProviders = route.providers.filter(provider => {
+            return provider.pricelistValidUntil && provider.pricelistValidUntil > now;
+          });
+
+          validProviders.forEach(provider => {
+            flatList.push({ route, provider });
           });
         }
       });
+
       return flatList.sort((a, b) => {
         let comparison = 0;
         if (this.sortBy === "price") {
@@ -214,28 +222,63 @@ export default {
       }
     },
 
+    confirmBooking() {
+      if (!this.selectedProvider.pricelistId) {
+        this.errorMessage = "PricelistId is missing";
+        this.startAlertTimer();
+        return;
+      }
+
+      const reservation = {
+        customerId: sessionStorage.getItem("customerId"),
+        customerFirstName: sessionStorage.getItem("firstName"),
+        customerLastName: sessionStorage.getItem("lastName"),
+        providerId: this.selectedProvider.id,
+        price: this.selectedProvider.price,
+        flightStart: this.selectedProvider.flightStart,
+        flightEnd: this.selectedProvider.flightEnd,
+        travelTime: this.selectedProvider.travelTimeMinutes,
+        companyId: this.selectedProvider.companyId,
+        companyName: this.selectedProvider.companyName,
+        legId: this.selectedProvider.legId,
+        routeId: this.selectedRoute.id,
+        fromPlanetName: this.selectedRoute.fromPlanetName,
+        toPlanetName: this.selectedRoute.toPlanetName,
+        distance: this.selectedRoute.distance,
+        pricelistId: this.selectedProvider.pricelistId,
+        pricelistValidUntil: this.selectedProvider.pricelistValidUntil
+      };
+
+      ReservationService.sendBooking(reservation)
+          .then(() => {
+            this.successMessage = "Booking confirmed!";
+            this.showBookingModal = false;
+            setTimeout(() => {
+              this.successMessage = "";
+              NavigationService.navigateToBookingsView();
+            }, 2000);
+          })
+          .catch((error) => {
+            this.showBookingModal = false;
+            this.errorMessage = "Booking confirmation failed";
+            this.startAlertTimer();
+          });
+    },
+
     closeBookingModal() {
       this.showBookingModal = false;
     },
 
-    confirmBooking() {
-      this.showBookingModal = false;
-      this.successMessage = `Booking confirmed! From: ${this.selectedRoute.fromPlanetName} → ${this.selectedRoute.toPlanetName}`;
-      setTimeout(() => {
-        NavigationService.navigateToBookingsView();
-      }, 3000);
+    closeModal() {
+      this.showLoginModal = false;
+      if (this.modalTimeout) clearTimeout(this.modalTimeout);
     },
 
     startAlertTimer() {
       if (this.alertTimeout) clearTimeout(this.alertTimeout);
       this.alertTimeout = setTimeout(() => {
         this.errorMessage = "";
-      }, 3000);
-    },
-
-    closeModal() {
-      this.showLoginModal = false;
-      if (this.modalTimeout) clearTimeout(this.modalTimeout);
+      }, 2000);
     },
 
     handleLogout() {
