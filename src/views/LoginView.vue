@@ -112,6 +112,8 @@ export default {
           .catch(() => {
             this.errorMessage = "Login failed. Check your credentials";
             this.startAlertTimer();
+            this.firstName = '';
+            this.lastName = '';
           });
     },
 
@@ -307,11 +309,4 @@ export default {
   align-items: center;
 }
 
-.alert-danger,
-.alert-success {
-  width: 100%;
-  padding: 0.8rem;
-  border-radius: 6px;
-  text-align: center;
-}
 </style>
