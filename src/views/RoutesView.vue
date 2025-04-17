@@ -16,6 +16,7 @@
     />
 
     <AlertSuccess v-if="successMessage" :message="successMessage"/>
+    <AlertDanger :message="errorMessage"/>
 
     <div class="title-wrapper">
       <div class="main-title">
@@ -113,16 +114,16 @@
 </template>
 
 <script>
-import NavigationService from "@/services/NavigationService";
-import LoginRequiredModal from "@/components/LoginRequiredModal.vue";
-import BookingDetailsModal from "@/components/BookingDetailsModal.vue";
-import RouteService from "@/services/RouteService";
-import ReservationService from "@/services/BookingService";
-import AlertDanger from "@/components/alerts/AlertDanger.vue";
-import AlertSuccess from "@/components/alerts/AlertSuccess.vue";
+import NavigationService from '@/services/NavigationService';
+import LoginRequiredModal from '@/components/LoginRequiredModal.vue';
+import BookingDetailsModal from '@/components/BookingDetailsModal.vue';
+import RouteService from '@/services/RouteService';
+import ReservationService from '@/services/BookingService';
+import AlertDanger from '@/components/alerts/AlertDanger.vue';
+import AlertSuccess from '@/components/alerts/AlertSuccess.vue';
 
 export default {
-  name: "RoutesView",
+  name: 'RoutesView',
   components: {
     LoginRequiredModal,
     BookingDetailsModal,
@@ -136,20 +137,20 @@ export default {
       selectedRoute: null,
       selectedProvider: null,
       modalTimeout: null,
-      sortBy: "price",
-      sortOrder: "asc",
-      selectedFromPlanet: "",
-      selectedToPlanet: "",
+      sortBy: 'price',
+      sortOrder: 'asc',
+      selectedFromPlanet: '',
+      selectedToPlanet: '',
       routes: [],
-      errorMessage: "",
-      successMessage: "",
+      errorMessage: '',
+      successMessage: '',
       alertTimeout: null
     };
   },
   computed: {
     isLoggedIn() {
-      return sessionStorage.getItem("firstName") !== null &&
-          sessionStorage.getItem("lastName") !== null;
+      return sessionStorage.getItem('firstName') !== null &&
+          sessionStorage.getItem('lastName') !== null;
     },
 
     filteredRoutes() {
@@ -183,7 +184,7 @@ export default {
         } else if (this.sortBy === "distance") {
           comparison = a.route.distance - b.route.distance;
         } else if (this.sortBy === "travelTime") {
-          comparison = a.provider.travelTimeMinutes - b.provider.travelTimeMinutes;
+          comparison = parseDuration(a.provider.travelTime) - parseDuration(b.provider.travelTime);
         }
         return this.sortOrder === "asc" ? comparison : -comparison;
       });
@@ -223,10 +224,18 @@ export default {
     },
 
     confirmBooking() {
+
       if (!this.selectedProvider.pricelistId) {
         this.errorMessage = "PricelistId is missing";
         this.startAlertTimer();
         return;
+      }
+
+      let travelTimeISO;
+      if (this.selectedProvider.travelTimeMinutes) {
+        const hours = Math.floor(this.selectedProvider.travelTimeMinutes / 60);
+        const minutes = this.selectedProvider.travelTimeMinutes % 60;
+        travelTimeISO = `PT${hours}H${minutes}M`;
       }
 
       const reservation = {
@@ -237,7 +246,7 @@ export default {
         price: this.selectedProvider.price,
         flightStart: this.selectedProvider.flightStart,
         flightEnd: this.selectedProvider.flightEnd,
-        travelTime: this.selectedProvider.travelTimeMinutes,
+        travelTime: travelTimeISO || `PT0H0M`,
         companyId: this.selectedProvider.companyId,
         companyName: this.selectedProvider.companyName,
         legId: this.selectedProvider.legId,
@@ -253,6 +262,8 @@ export default {
           .then(() => {
             this.successMessage = "Booking confirmed!";
             this.showBookingModal = false;
+
+            this.$emit("booking-confirmed)")
             setTimeout(() => {
               this.successMessage = "";
               NavigationService.navigateToBookingsView();
@@ -294,8 +305,16 @@ export default {
     navigateToPlanetsView() {
       NavigationService.navigateToPlanetsView();
     }
+
+
   }
 };
+function parseDuration(isoDuration) {
+  const match = /PT(?:(\d+)H)?(?:(\d+)M)?/.exec(isoDuration);
+  const hours = match[1] ? parseInt(match[1]) : 0;
+  const minutes = match[2] ? parseInt(match[2]) : 0;
+  return hours * 60 + minutes;
+}
 </script>
 
 <style scoped>

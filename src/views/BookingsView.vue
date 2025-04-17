@@ -2,16 +2,49 @@
   <div class="bookings-container">
     <div class="title-wrapper">
       <div class="main-title">
-        <h5>My Bookings</h5>
+        <div>
+          <h5>My Bookings</h5>
+        </div>
+        <div class="customer-name">
+          <h6>{{ customerName }}</h6>
+        </div>
       </div>
     </div>
 
-    <div>
+    <div class="bookings-section">
+      <div class="bookings-table" v-if="bookings.length > 0">
+        <div class="booking-row header-row">
+          <span>Booked At</span>
+          <span>From</span>
+          <span>To</span>
+          <span>Departure</span>
+          <span>Arrival</span>
+          <span>Travel Time</span>
+          <span>Company</span>
+          <span>Price</span>
+        </div>
 
-    </div>
+        <div class="bookings-content">
+          <div
+              v-for="booking in bookings"
+              :key="booking.id"
+              class="booking-row"
+          >
+            <span>{{ formatDate(booking.createdAt) }}</span>
+            <span>{{ booking.fromPlanetName }}</span>
+            <span>{{ booking.toPlanetName }}</span>
+            <span>{{ formatDate(booking.flightStart) }}</span>
+            <span>{{ formatDate(booking.flightEnd) }}</span>
+            <span>{{ booking.travelTimeFormatted }}</span>
+            <span>{{ booking.companyName }}</span>
+            <span>{{ booking.price }} CC</span>
+          </div>
+        </div>
+      </div>
 
-    <div>
-      <p>Your bookings will be here...</p>
+      <div v-else class="no-bookings">
+        <p>You have no bookings yet</p>
+      </div>
     </div>
 
     <div class="bottom-nav">
@@ -32,14 +65,15 @@
 
 <script>
 import NavigationService from "@/services/NavigationService";
-import BookingsService from "@/services/BookingService";
+import BookingService from "@/services/BookingService";
 
 export default {
   name: "BookingsView",
   data() {
     return {
       bookings: [],
-      errorMessage: ""
+      errorMessage: "",
+      customerName: ""
     };
   },
   computed: {
@@ -58,22 +92,35 @@ export default {
   methods: {
     loadBookings() {
       const customerId = sessionStorage.getItem("customerId");
-      BookingsService.getBookingsByCustomerId(customerId)
+
+      BookingService.getBookingsByCustomerId(customerId)
           .then(response => {
             this.bookings = response.data;
+
+            if (this.bookings.length > 0) {
+              const booking = this.bookings[0];
+              this.customerName = `${booking.customerFirstName} ${booking.customerLastName}`;
+            }
           })
-          .catch(() => {
+          .catch((error) => {
             this.errorMessage = "Failed to load your bookings.";
           });
     },
+
+
     handleLogout() {
       sessionStorage.clear();
       NavigationService.navigateToHomeView();
+    },
+
+    formatDate(datetime) {
+      if (!datetime) return '';
+      const options = {year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'};
+      return new Date(datetime).toLocaleString('en-GB', options);
     }
   }
 };
 </script>
-
 <style scoped>
 .bookings-container {
   position: relative;
@@ -83,6 +130,58 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-bottom: 80px;
+}
+
+.bookings-section {
+  width: 90%;
+  max-width: 1200px;
+  margin: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.bookings-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.bookings-content {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.booking-row {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1.2fr 1.2fr 1fr 1fr 0.8fr;
+  gap: 10px;
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  font-size: 0.95rem;
+  align-items: center;
+}
+
+.header-row {
+  font-weight: bold;
+  background: #e3e3e3;
+  text-transform: uppercase;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.no-bookings {
+  text-align: center;
+  padding: 2rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .title-wrapper {
@@ -100,12 +199,26 @@ export default {
   font-size: 1.9rem;
 }
 
+.customer-name {
+  margin-top: 10px;
+  color: #001c3c;
+  font-size: 1.2rem;
+  font-weight: normal;
+  font-family: 'Arial', sans-serif;
+  text-transform: none;
+  letter-spacing: normal;
+  text-shadow: none;
+}
+
 .bottom-nav {
-  position: absolute;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #cfc4ab;
+  padding: 1rem 0;
   text-align: center;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .bottom-nav-link {
@@ -133,5 +246,24 @@ export default {
 .divider {
   color: #001c3c;
   opacity: 0.8;
+}
+
+/* Scrollbar */
+.bookings-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.bookings-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.bookings-content::-webkit-scrollbar-thumb {
+  background: #00e5ff;
+  border-radius: 4px;
+}
+
+.bookings-content::-webkit-scrollbar-thumb:hover {
+  background: #008c99;
 }
 </style>
