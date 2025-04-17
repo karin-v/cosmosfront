@@ -1,5 +1,9 @@
 # Cosmos Odyssey
 
+A simple web app for booking interplanetary travel based on active route pricelists. 
+Users can view routes, filter and sort options, and make reservations before the pricelist expires. 
+System stores the last 15 active pricelists and associated bookings.
+
 ## Technologies Used
 
 - **Frontend:** Vue.js 3.2.13, JavaScript
