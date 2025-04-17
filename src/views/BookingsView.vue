@@ -102,7 +102,7 @@ export default {
               this.customerName = `${booking.customerFirstName} ${booking.customerLastName}`;
             }
           })
-          .catch((error) => {
+          .catch(() => {
             this.errorMessage = "Failed to load your bookings.";
           });
     },

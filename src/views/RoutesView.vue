@@ -269,7 +269,7 @@ export default {
               NavigationService.navigateToBookingsView();
             }, 2000);
           })
-          .catch((error) => {
+          .catch(() => {
             this.showBookingModal = false;
             this.errorMessage = "Booking confirmation failed";
             this.startAlertTimer();
